@@ -1,0 +1,6 @@
+{
+	"/": [],
+	"/editors/[editor]": [
+		"src/routes/editors/[editor]/+page.ts"
+	]
+}
