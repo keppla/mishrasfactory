@@ -4,19 +4,14 @@
     import Scene from '../widgets/Scene.svelte';
     import Box from '../widgets/Box.svelte';
     import DirectionalLight from '../widgets/DirectionalLight.svelte';
-    import Curve from '../widgets/Curve.svelte';
     import Ground from '../widgets/Ground.svelte';
     
     let items: Vector3[] = [];
     
     function handleClick(evt: CustomEvent<{ hits: { point: Vector3 }[] }>) {
-        console.log("xxx", evt.detail.hits);
         items = [ ...items, ...evt.detail.hits.map(h => h.point.clone()) ];
     }
-
 </script>
-
-
 
 <Scene on:click={ handleClick }>
     <DirectionalLight />

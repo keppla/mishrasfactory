@@ -36,6 +36,7 @@ declare module '$env/static/private' {
 	export const SHLVL: string;
 	export const npm_config_noproxy: string;
 	export const HOME: string;
+	export const OLDPWD: string;
 	export const DESKTOP_SESSION: string;
 	export const NVM_BIN: string;
 	export const npm_package_json: string;
@@ -43,6 +44,7 @@ declare module '$env/static/private' {
 	export const GNOME_SHELL_SESSION_MODE: string;
 	export const HOMEBREW_PREFIX: string;
 	export const GTK_MODULES: string;
+	export const PS1: string;
 	export const LC_MONETARY: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_local_prefix: string;
@@ -114,6 +116,7 @@ declare module '$env/static/private' {
 	export const VTE_VERSION: string;
 	export const INIT_CWD: string;
 	export const EDITOR: string;
+	export const NODE_ENV: string;
 }
 
 /**
@@ -153,6 +156,7 @@ declare module '$env/dynamic/private' {
 		SHLVL: string;
 		npm_config_noproxy: string;
 		HOME: string;
+		OLDPWD: string;
 		DESKTOP_SESSION: string;
 		NVM_BIN: string;
 		npm_package_json: string;
@@ -160,6 +164,7 @@ declare module '$env/dynamic/private' {
 		GNOME_SHELL_SESSION_MODE: string;
 		HOMEBREW_PREFIX: string;
 		GTK_MODULES: string;
+		PS1: string;
 		LC_MONETARY: string;
 		npm_config_userconfig: string;
 		npm_config_local_prefix: string;
@@ -231,6 +236,7 @@ declare module '$env/dynamic/private' {
 		VTE_VERSION: string;
 		INIT_CWD: string;
 		EDITOR: string;
+		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: string]: string | undefined;
 	}

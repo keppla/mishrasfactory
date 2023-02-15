@@ -1,12 +1,15 @@
 import { Vector3 } from "three";
 
 
-
-
 interface BaseEditor {
     id: string,
     title: string,
     update: (data: any) => void,
+}
+
+
+export interface ShapeDisplay extends BaseEditor {
+    type: "ShapeDisplay",
 }
 
 
@@ -31,11 +34,15 @@ export type Editor = ShapeEditor | ExtrusionEditor;
 export class Storage {
 
     private data : { [id: string]: any } = {};
-    
+
     store(id: string, value: any) {
         this.data[id] = value;
     }
-    
+
+    has(id: string): boolean {
+        return this.data.hasOwnProperty(id);
+    }
+
     load(id: string): any {
         return this.data[id];
     }
@@ -50,12 +57,20 @@ export class Api {
     constructor(storage: Storage) {
         this.storage = storage;
     }
+    
+    createShape(
+            points: {x: number, y: number, z: number}[],
+            lines: { from: number, to: number }[]): Shape {
+        return new Shape(this, {
+            lines,
+            points: points.map(p => new Vector3(p.x, p.y, p.z))
+        });
+    }
 
     designShape(name: string): Shape {
-        
         const id = `shape-${ name }`;
 
-        const data = this.storage.load(id) || {
+        const data = this.ensure(id, {
             points: [
                 new Vector3(-10, 0, -10),
                 new Vector3(10, 0, -10),
@@ -72,20 +87,35 @@ export class Api {
                 { from: 4, to: 5 },
                 { from: 5, to: 0 },
             ],
-        };
-        
-        this.editors.push({
-            type: "ShapeEditor",
-            title: `Edit Shape "${ name }"`,
-            id,
-            data,
-            update: data => { this.storage.store(id, data); }
-        })
+        });
+
+        this.announceEditor('ShapeEditor', id, `Edit Shape "${ name }"`);
 
         return new Shape(this, data);
     }
-}
 
+    ensure(id: string, defaultData: any) {
+        if (!this.storage.has(id)) {
+            this.storage.store(id, defaultData);
+            return defaultData;
+        }
+        else {
+            return this.storage.load(id);
+        }
+    }
+
+    announceEditor(type: Editor['type'], id: string, title: string, extra: any = {}) {
+        this.editors.push({
+            id,
+            type,
+            title,
+            ...extra,
+            data: this.storage.load(id),
+            update: data => { this.storage.store(id, data); }
+        });
+        console.log("pushing editor", id, this.editors);
+    }
+}
 
 
 interface ShapeData {
@@ -99,21 +129,27 @@ class Shape {
 
     extrude(name: string): Body {
         const id = `extrude-${ name }`;
-        
-        const data = this.api.storage.load(id) || {
-            distance: 5
-        };
+        const data = this.api.ensure(id, { distance: 5 });
 
-        this.api.editors.push({
-            type: "ExtrusionEditor",
-            title: `ExtrusionEditor Shape "${ name }"`,
-            id,
-            shapeData: this.data,
-            data: data,
-            update: data => { this.api.storage.store(id, data); }
-        });
+        this.api.announceEditor(
+                    "ExtrusionEditor",
+                    id,
+                    `ExtrusionEditor Shape "${ name }"`,
+                    {
+                        shapeData: this.data,
+                    });
 
         return new Body(this.api, {});
+    }
+    
+    show(name: string): Shape {
+        const id = `extrude-${ name }`;
+        this.api.announceEditor(
+            "ShapeDisplay",
+            id,
+            `Display Shape "${ name }"`,
+            {});
+        return this;
     }
 }
 

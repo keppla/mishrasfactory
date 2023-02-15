@@ -22,8 +22,6 @@
             new Vector3(x1, y1, z1),
             new Vector3(x2, y2, z2),
         ]);
-        
-        console.log("linegeometry", mesh.geometry);
     }
 </script>
 <SceneObject obj={ mesh } />
